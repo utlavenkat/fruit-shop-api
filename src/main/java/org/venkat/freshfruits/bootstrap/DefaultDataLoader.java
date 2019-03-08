@@ -5,19 +5,23 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.venkat.freshfruits.entity.Category;
 import org.venkat.freshfruits.entity.Customer;
+import org.venkat.freshfruits.entity.Vendor;
 import org.venkat.freshfruits.repositories.CategoryRepository;
 import org.venkat.freshfruits.repositories.CustomerRepository;
+import org.venkat.freshfruits.repositories.VendorRepository;
 
 @Component
 @RequiredArgsConstructor
 public class DefaultDataLoader implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final CustomerRepository customerRepository;
+    private final VendorRepository vendorRepository;
 
     @Override
     public void run(String... args) {
         loadCategories();
         loadCustomers();
+        loadVendors();
     }
 
     private void loadCategories() {
@@ -69,6 +73,28 @@ public class DefaultDataLoader implements CommandLineRunner {
             praneel.setFirstName("Praneel");
             praneel.setLastName("Utla");
             customerRepository.save(praneel);
+        }
+    }
+
+    private void loadVendors() {
+        Iterable<Vendor> vendors = vendorRepository.findAll();
+        if (vendors == null || !vendors.iterator().hasNext()) {
+            Vendor vendor1 = new Vendor();
+            vendor1.setName("Venkatasubbaiah");
+            vendorRepository.save(vendor1);
+
+            Vendor vendor2 = new Vendor();
+            vendor2.setName("Vendor2");
+            vendorRepository.save(vendor2);
+
+            Vendor vendor3 = new Vendor();
+            vendor3.setName("Vendor3");
+            vendorRepository.save(vendor3);
+
+            Vendor vendor4 = new Vendor();
+            vendor4.setName("Vendor4");
+            vendorRepository.save(vendor4);
+
         }
     }
 }

@@ -20,7 +20,6 @@ public class CustomerRepositoryIT {
 
     private static final String FIRST_NAME = "Test First Name";
     private static final String LAST_NAME = "Test Last Name";
-    private static final Long CUSTOMER_ID = 100L;
 
     @Autowired
     private CustomerRepository customerRepository;
