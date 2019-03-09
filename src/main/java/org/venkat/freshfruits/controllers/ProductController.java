@@ -3,15 +3,24 @@ package org.venkat.freshfruits.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.venkat.freshfruits.dto.ProductDTO;
 import org.venkat.freshfruits.dto.ProductsListDataDTO;
 import org.venkat.freshfruits.services.ProductService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 @RestController
 @RequiredArgsConstructor
 @Api(value = "Products", description = "REST API for Product", tags = {"Products"})
+@Slf4j
 public class ProductController {
     private final ProductService productService;
 
@@ -56,4 +65,34 @@ public class ProductController {
     public void deleteProduct(@PathVariable final Long id) {
         productService.deleteById(id);
     }
+
+    @PutMapping("/shop/products/{id}/photo")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Add or update the photo of a product")
+    public ProductDTO uploadImage(@PathVariable final Long id, @RequestParam("file") MultipartFile file) throws Exception {
+        byte[] imageBytes = file.getBytes();
+        Byte[] wrapperBytes = new Byte[imageBytes.length];
+        int index = 0;
+        for (index = 0; index < imageBytes.length; index++) {
+            wrapperBytes[index] = imageBytes[index];
+        }
+        return productService.addOrUpdatePhoto(id, wrapperBytes);
+    }
+
+    @GetMapping("/shop/products/{id}/photo")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get photo of a product")
+    public void downloadPhoto(@PathVariable final Long id, HttpServletResponse servletResponse) throws IOException {
+
+        Byte[] imageBytes = productService.getPhoto(id);
+        servletResponse.setContentType("image/jpeg");
+        byte[] byteArray = new byte[imageBytes.length];
+        int i = 0;
+        for (Byte wrapperByte : imageBytes) {
+            byteArray[i++] = wrapperByte;
+        }
+        InputStream is = new ByteArrayInputStream(byteArray);
+        IOUtils.copy(is, servletResponse.getOutputStream());
+    }
+
 }

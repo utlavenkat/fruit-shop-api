@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private static final String PRODUCTS_BASE_URL = "/shop/vendors/";
+    private static final String PRODUCTS_BASE_URL = "/shop/products/";
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
@@ -70,10 +70,30 @@ public class ProductService {
         if (product == null) {
             throw new NotFoundException("No Product found for the Id " + id);
         }
-        if (!StringUtils.isEmpty(product.getName())) {
+        if (!StringUtils.isEmpty(productDTO.getName())) {
             product.setName(productDTO.getName());
         }
+
         return productMapper.entityToDto(productRepository.save(product));
+    }
+
+    public ProductDTO addOrUpdatePhoto(Long id, Byte[] image) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product == null) {
+            throw new NotFoundException("No Product found for the Id " + id);
+        }
+        product.setImage(image);
+        ProductDTO productDTO = productMapper.entityToDto(productRepository.save(product));
+        productDTO.setProductUrl(PRODUCTS_BASE_URL + "/" + id + "/photo");
+        return productDTO;
+    }
+
+    public Byte[] getPhoto(Long id) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product == null) {
+            throw new NotFoundException("No Product found for the Id " + id);
+        }
+        return product.getImage();
     }
 
 }

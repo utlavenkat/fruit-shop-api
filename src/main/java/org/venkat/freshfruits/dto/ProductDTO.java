@@ -12,4 +12,6 @@ public class ProductDTO {
 
     @JsonProperty("product_url")
     private String productUrl;
+
+    private String imageUrl;
 }
