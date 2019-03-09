@@ -5,9 +5,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.venkat.freshfruits.entity.Category;
 import org.venkat.freshfruits.entity.Customer;
+import org.venkat.freshfruits.entity.Product;
 import org.venkat.freshfruits.entity.Vendor;
 import org.venkat.freshfruits.repositories.CategoryRepository;
 import org.venkat.freshfruits.repositories.CustomerRepository;
+import org.venkat.freshfruits.repositories.ProductRepository;
 import org.venkat.freshfruits.repositories.VendorRepository;
 
 @Component
@@ -16,12 +18,14 @@ public class DefaultDataLoader implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final CustomerRepository customerRepository;
     private final VendorRepository vendorRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public void run(String... args) {
         loadCategories();
         loadCustomers();
         loadVendors();
+        loadProducts();
     }
 
     private void loadCategories() {
@@ -97,4 +101,24 @@ public class DefaultDataLoader implements CommandLineRunner {
 
         }
     }
+
+    private void loadProducts() {
+        Iterable<Product> products = productRepository.findAll();
+        if (products == null || !products.iterator().hasNext()) {
+
+            Product bananas = new Product();
+            bananas.setName("Bananas");
+            productRepository.save(bananas);
+
+            Product oranges = new Product();
+            oranges.setName("Oranges");
+            productRepository.save(oranges);
+
+            Product pineapples = new Product();
+            pineapples.setName("Pineapples");
+            productRepository.save(pineapples);
+
+        }
+    }
+
 }
